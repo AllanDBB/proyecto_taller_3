@@ -1,5 +1,13 @@
 import random
 
+def limpiar_pantalla():
+    # E: N/A
+    # S: N/A
+    # R: N/A
+
+    for i in range(100):
+        print()
+
 def generar_matriz(dimensiones):
     #E: un número entero
     #S: una matriz cuadrada de las dimensiones recibidas
@@ -43,27 +51,51 @@ def es_matriz(matriz):
         i+=1
     return True
 
-def imprimir_matriz(matriz): 
-    #E: una matriz
-    #S: una matriz con el formato estandar
-    #R: debe ser una matriz la entrada
-    if es_matriz(matriz) != True:
+def imprimir_matriz(matriz):
+    """
+    Imprime una matriz en la consola con colores según el contenido de cada celda.
+
+    Args:
+        matriz: La matriz a imprimir.
+
+    Returns:
+        None
+    """
+
+    if not es_matriz(matriz):
         return 'Error: no es matriz'
-    
+
+    VERDE = "\033[92m"
+    AMARILLO = "\033[93m"
+    ROJO = "\033[91m"
+    AZUL = "\033[94m"
+    RESET = "\033[0m"
+
     n = len(matriz)
     m = len(matriz[0])
-    
-    # Imprimir los índices de las columnas
-    print("    ", end="")
+
+    # Imprimir índices de columnas
+    print("     ", end="")
     for j in range(m):
-        print(j, end=" ")
+        print(j, end="   ")
     print()
-    
+
     for i in range(n):
-        # Imprimir el índice de la fila
-        print(i, end=" | ")
+        # Imprimir índice de fila
+        print(i, end="  |  ")
         for j in range(m):
-            print(matriz[i][j], end=" ")
+            if matriz[i][j] == "P":
+                color = VERDE  # Proyecto en verde
+            elif matriz[i][j] == "C":
+                color = AMARILLO  # Cultura en amarillo
+            elif matriz[i][j] == "I":
+                color = AZUL  # Iniciativa en azul
+            elif matriz[i][j] == "U":
+                color = ROJO  # Usurpación en rojo
+            else:
+                color = RESET  # Celda vacía sin color
+
+            print(color + str(matriz[i][j]) + RESET, end="   ")  # Imprimir con color
         print()
 
     return None
@@ -170,26 +202,32 @@ def usurpacion(matriz):
     
 def jugar(primera_vez = True, matriz = []):
 
-    #E: N/A
-    #S: N/A
-    #R: N/A
+    """
+    Función principal del juego Solar Punk.
+    """
 
-    print("¡Bienvenido a Solar Punk!")
-    print("¡Buena suerte!")
+    VERDE = "\033[92m"
+    AMARILLO = "\033[93m"
+    ROJO = "\033[91m"
+    RESET = "\033[0m"
+
+    print(f"\n{VERDE}🌱 ¡Bienvenido a Solar Punk! 🌱{RESET}")
+    print(f"{AMARILLO}¡Buena suerte construyendo un futuro sostenible!{RESET}\n")
 
     
     if primera_vez:
-        dimensiones = input("Ingrese las dimensiones de la matriz: ")
+        dimensiones = input("Ingrese las dimensiones de la matriz (>=3): ")
         dimensiones_validadas = validar_cadena_numero(dimensiones)
 
         if dimensiones_validadas == False:
-            print("Error: las dimensiones deben ser un número.")
-            jugar(True, matriz)
+            print(f"{ROJO}⛔ ¡Error! Las dimensiones deben ser un número.{RESET}")
+            return jugar(True, matriz)
         else:
             dimensiones = int(dimensiones)
 
             if dimensiones < 3:
-                jugar(True, matriz)
+                print(f"{ROJO}⛔ ¡Error! Las dimensiones deben ser al menos 3x3.{RESET}")
+                return jugar(True, matriz)
             else:
                 matriz = generar_matriz(dimensiones)
                 imprimir_matriz(matriz)
@@ -200,17 +238,17 @@ def jugar(primera_vez = True, matriz = []):
         for i in range(cantidad_usurpaciones):
             usurpacion(matriz)
 
-        print("¿Qué quieres hacer?")
-        print("1. Plantear una iniciativa")
-        print("2. Establecer un proyecto")
-        print("3. Difundir cultura")
-        
-        opcion = input("Ingrese el número de la opción que desea: ")
+        print(f"\n{AMARILLO}¿Qué quieres hacer?{RESET}")
+        print(f"1. 🌱 {VERDE}Plantar una iniciativa{RESET}")
+        print(f"2. 🚧 {VERDE}Establecer un proyecto{RESET}")
+        print(f"3. 🗣️ {VERDE}Difundir cultura{RESET}\n")
+
+        opcion = input("Elige una opción (1-3): ")
         opcion_validada = validar_cadena_numero(opcion)
 
         if opcion_validada == False:
-            print("Error: la opción debe ser un número.")
-            jugar(False, matriz)
+            print(f"{ROJO}⛔ ¡Error! La opción debe ser un número.{RESET}")
+            return jugar(False, matriz)
         else:
             opcion = int(opcion)
 
@@ -218,18 +256,17 @@ def jugar(primera_vez = True, matriz = []):
                 
                 for iniciativa in range(2):
 
-                    print(f"¿Dónde quieres plantar tu {iniciativa+1} iniciativa?")
-                    print("Ingresa coordenadas para plantear una iniciativa.")                
+                    print(f"\n¿Dónde quieres plantar tu {iniciativa + 1}ª iniciativa?")
 
-                    fila = input("Fila: ")
+                    fila = input(f"{AMARILLO}Fila:{RESET} ")
                     fila_validada = validar_cadena_numero(fila)
 
-                    columna = input("Columna: ")
+                    columna = input(f"{AMARILLO}Columna:{RESET} ")
                     columna_validada = validar_cadena_numero(columna)
 
                     if fila_validada == False or columna_validada == False:
-                        print("Error: las coordenadas deben ser números.")
-                        jugar(False, matriz)
+                        print(f"{ROJO}⛔ ¡Error! Las coordenadas deben ser números.{RESET}")
+                        return jugar(False, matriz)
                     else:
                         colocar_elemento(matriz, "I", int(fila), int(columna))
                         imprimir_matriz(matriz)
@@ -237,18 +274,18 @@ def jugar(primera_vez = True, matriz = []):
 
             elif opcion == 2:
                 
-                print("¿Dónde quieres establecer tu proyecto?")
-                print("Ingresa coordenadas para establecer un proyecto.")
+                print("\n¿Dónde quieres establecer tu proyecto?")
 
-                fila = input("Fila: ")
+                fila = input(f"{AMARILLO}Fila:{RESET} ")
                 fila_validada = validar_cadena_numero(fila)
 
-                columna = input("Columna: ")
+                columna = input(f"{AMARILLO}Columna:{RESET} ")
                 columna_validada = validar_cadena_numero(columna)
 
+
                 if fila_validada == False or columna_validada == False:
-                    print("Error: las coordenadas deben ser números.")
-                    jugar(False, matriz)
+                    print(f"{ROJO}⛔ ¡Error! Las coordenadas deben ser números.{RESET}")
+                    return jugar(False, matriz) 
                 else:
                     colocar_elemento(matriz, "P", int(fila), int(columna))
                     imprimir_matriz(matriz)
@@ -264,40 +301,37 @@ def jugar(primera_vez = True, matriz = []):
 
                 if probabilidad == 1:
                     
-                    print("¡Has difundido cultura de forma vertical!")
-                    print("¿En qué fila quieres difundir cultura?")
-                    fila = input("Fila: ")
+                    print(f"\n{VERDE}¡Has difundido cultura de forma horizontal!{RESET}")
+                    fila = input(f"{AMARILLO}¿En qué fila quieres difundir cultura?{RESET} ")
                     fila_validada = validar_cadena_numero(fila)
 
                     if fila_validada == False:
-                        print("Error: la fila debe ser un número.")
-                        jugar(False, matriz)
+                        print(f"{ROJO}⛔ ¡Error! La fila debe ser un número.{RESET}")
+                        return jugar(False, matriz)
                     else:
                         llenar_fila(matriz, "C", int(fila))
                         imprimir_matriz(matriz)
                 
                 elif probabilidad == 2:
                         
-                        print("¡Has difundido cultura de forma horizontal!")
-                        print("¿En qué columna quieres difundir cultura?")
-                        columna = input("Columna: ")
-                        columna_validada = validar_cadena_numero(columna)
+                    print(f"\n{VERDE}¡Has difundido cultura de forma horizontal!{RESET}")
+                    columna = input(f"{AMARILLO}¿En qué columna quieres difundir cultura?{RESET} ")
+                    columna_validada = validar_cadena_numero(columna)
     
-                        if columna_validada == False:
-                            print("Error: la columna debe ser un número.")
-                            jugar(False, matriz)
-
-                        else:
-                            llenar_columna(matriz, "C", int(columna))
-                            imprimir_matriz(matriz)
+                    if columna_validada == False:
+                        print(f"{ROJO}⛔ ¡Error! La columna debe ser un número.{RESET}")
+                        return jugar(False, matriz)
+                    else:
+                        llenar_columna(matriz, "C", int(columna))
+                        imprimir_matriz(matriz)
                 
                 else:
-                    print("¡No has podido difundir cultura!")
+                    print(f"\n{ROJO}¡No has podido difundir cultura!{RESET}")
                     imprimir_matriz(matriz)
     
             else:
-                print("Error: la opción debe ser un número entre 1 y 3.")
-                jugar(False, matriz)
+                print(f"{ROJO}⛔ ¡Error! La opción debe ser un número entre 1 y 3.{RESET}")
+                return jugar(False, matriz)
         
         for i in range(len(matriz)):
             for j in range(len(matriz)):
@@ -306,57 +340,157 @@ def jugar(primera_vez = True, matriz = []):
 
         for i in range(len(matriz)):
             if matriz[i].count("P") == len(matriz) or matriz[i].count("U") == len(matriz):
-                print("¡Has perdido!")
+                print(f"\n{ROJO}¡Has perdido!{RESET}")
                 return True
         
         return matriz
-            
-        
-
-
+             
 def tutorial():
+    """
+    Presenta el tutorial del juego Solar Punk de manera interactiva y amigable.
+    """
+    limpiar_pantalla()  # Limpia la pantalla para una mejor presentación
 
-    # E: N/A
-    # S: N/A
-    # R: N/A
+    print("\n¡Bienvenido al mundo de Solar Punk!\n")
+    print("--------------------------------------------------")
+    print("      🌱  UN FUTURO MÁS VERDE TE ESPERA  🌱        ")
+    print("--------------------------------------------------\n")
 
-    print("¡Bienvenido al tutorial de Solar Punk!")
-    print("En Solar Punk, debes sobrevivir en un mundo post-apocalíptico.")
-    print("Para sobrevivir, debes recolectar recursos y construir edificaciones.")
-    print("¡Buena suerte!")
-    
+    input("Presiona Enter para comenzar el tutorial... ")
+    limpiar_pantalla()
+
+    print("\n🌱  OBJETIVO DEL JUEGO 🌱")
+    print("----------------------------")
+    print("Sobrevive en un mundo  donde la naturaleza retoma su lugar. ")
+    print("Tu misión es construir una sociedad sostenible y próspera.\n")
+
+    input("Presiona Enter para continuar... ")
+    limpiar_pantalla()
+
+    print("\n⚙️  MECÁNICAS BÁSICAS ⚙️")
+    print("----------------------------")
+    print("- PLANTAR INICIATIVAS (I): Siembra las semillas de un futuro mejor.")
+    print("- ESTABLECER PROYECTOS (P): Convierte tus iniciativas en proyectos concretos.")
+    print("- DIFUNDIR CULTURA (C): Expande el conocimiento y la conciencia ecológica.")
+    print("- USURPACIÓN (U): ¡Cuidado! Fuerzas opuestas intentarán sabotear tu progreso.\n")
+
+    input("Presiona Enter para continuar... ")
+    limpiar_pantalla()
+
+    print("\n✨  ¡CONSEJOS PARA TRIUNFAR! ✨")
+    print("--------------------------------")
+    print("- Planifica estratégicamente dónde colocar tus iniciativas y proyectos.")
+    print("- Prioriza la difusión de cultura para proteger tus logros.")
+    print("- ¡No te rindas ante las usurpaciones! La perseverancia es clave.\n")
+
+    print("--------------------------------------------------")
+    print("      ¡LISTO PARA CONSTRUIR EL FUTURO!        ")
+    print("--------------------------------------------------\n")
+    input("Presiona Enter para volver al menú principal... ")
+   
 def instrucciones_solar_punk():
-    # E: N/A
-    # S: N/A
-    # R: N/A
+    """
+    Presenta el mundo Solarpunk y sus beneficios de manera atractiva y colorida.
+    """
+    limpiar_pantalla()
 
-    print("Instrucciones sobre Solar Punk")
-    print("Solar Punk es un juego de estrategia en el que debes sobrevivir en un mundo post-apocalíptico.")
-    print("El objetivo del juego es sobrevivir el mayor tiempo posible.")
-    print("Para sobrevivir, debes recolectar recursos y construir edificaciones.")
-    print("¡Buena suerte!")
+    VERDE = "\033[92m"
+    AMARILLO = "\033[93m"
+    RESET = "\033[0m"
+
+    print(f"\n{VERDE}🌿 ¡Bienvenido al mundo de Solar Punk! 🌿{RESET}\n")
+    print("--------------------------------------------------")
+    print(f"{AMARILLO}      ☀️  UN FUTURO RADIANTE Y SOSTENIBLE  ☀️      {RESET}")
+    print("--------------------------------------------------\n")
+
+    print(f"{VERDE}¿Qué es Solar Punk?{RESET}")
+    print("Es un movimiento artístico y literario que imagina un futuro utópico donde la tecnología y la naturaleza conviven en armonía. Es una visión optimista y esperanzadora de un mundo donde la energía renovable, la sostenibilidad y la justicia social son pilares fundamentales.\n")
+
+    print(f"{AMARILLO}¿Por qué Solar Punk?{RESET}")
+    print("Porque nos ofrece una alternativa inspiradora al pesimismo y la distopía. Nos invita a soñar con un futuro mejor y a trabajar activamente para construirlo. Solar Punk nos muestra que otro mundo es posible, un mundo más justo, equitativo y en equilibrio con el medio ambiente.\n")
+
+    print(f"{VERDE}Beneficios de un mundo Solar Punk:{RESET}")
+    print("- ☀️ Energía limpia y renovable para todos.")
+    print("- 🌿 Ciudades verdes y sostenibles integradas con la naturaleza.")
+    print("- 🤝 Comunidades fuertes y colaborativas basadas en la justicia social.")
+    print("- 🌍 Un planeta sano y regenerado para las futuras generaciones.\n")
+
+    print("--------------------------------------------------")
+    print(f"{AMARILLO}    ¡Únete a la revolución Solar Punk!   {RESET}")
+    print("--------------------------------------------------\n")
+
+    input("Presiona Enter para volver al menú principal... ")
 
 def informacion_pueblos_originarios():
-    # E: N/A
-    # S: N/A
-    # R: N/A
+    """
+    Presenta información sobre los pueblos originarios de Costa Rica.
+    """
+    limpiar_pantalla()
 
-    print("Información sobre pueblos originarios")
-    print("Los pueblos originarios son comunidades que han habitado un territorio por cientos o miles de años.")
-    print("En Costa Rica, los pueblos originarios son los bribri, cabécar, maleku, ngäbe y naso.")
-    print("Los pueblos originarios han sido desplazados y discriminados por la sociedad costarricense.")
-    print("¡Es importante conocer y respetar a los pueblos originarios!")
+    VERDE = "\033[92m"
+    AMARILLO = "\033[93m"
+    RESET = "\033[0m"
+
+    print(f"\n{VERDE}🌿 PUEBLOS ORIGINARIOS DE COSTA RICA 🌿{RESET}\n")
+    print("--------------------------------------------------")
+    print(f"{AMARILLO}      Un legado ancestral de sabiduría y resistencia      {RESET}")
+    print("--------------------------------------------------\n")
+
+    print(f"{VERDE}¿Quiénes son?{RESET}")
+    print("Son las comunidades indígenas que han habitado el territorio costarricense desde tiempos inmemoriales. Son los guardianes de una rica herencia cultural, lingüística y espiritual, profundamente conectada con la naturaleza y sus ciclos.\n")
+
+    print(f"{AMARILLO}Los ocho pueblos indígenas de Costa Rica:{RESET}")
+    print("- Bribri")
+    print("- Cabécar")
+    print("- Maleku")
+    print("- Térraba")
+    print("- Boruca")
+    print("- Huetar")
+    print("- Ngäbe")
+    print("- Chorotega\n")
+
+    print(f"{VERDE}Su importancia:{RESET}")
+    print("Los pueblos originarios son fundamentales para la identidad y la diversidad de Costa Rica. Su conocimiento ancestral sobre la tierra, la medicina natural y la conservación del medio ambiente es invaluable. Además, su lucha por la defensa de sus derechos y territorios es un ejemplo de resistencia y perseverancia.\n")
+
+    print(f"{AMARILLO}Desafíos y esperanzas:{RESET}")
+    print("A pesar de los desafíos históricos de discriminación y despojo territorial, los pueblos originarios siguen luchando por mantener vivas sus tradiciones y proteger sus tierras. Su resiliencia y su visión de un futuro sostenible son una fuente de inspiración para todos los costarricenses.\n")
+
+    print("--------------------------------------------------")
+    print(f"{VERDE}    ¡Honremos y aprendamos de nuestros pueblos originarios!   {RESET}")
+    print("--------------------------------------------------\n")
+
+    input("Presiona Enter para volver al menú principal... ")
 
 def informacion_conflicto_cabaga():
-    # E: N/A
-    # S: N/A
-    # R: N/A
+    """
+    Presenta información sobre el conflicto en el territorio indígena de Cabagra.
+    """
+    limpiar_pantalla()
 
-    print("Información sobre el conflicto de Cabagra")
-    print("El conflicto de Cabagra es un conflicto territorial entre los pueblos bribri y cabécar y el Estado costarricense.")
-    print("Los pueblos bribri y cabécar reclaman la devolución de sus tierras ancestrales.")
-    print("El Estado costarricense ha desatendido las demandas de los pueblos bribri y cabécar.")
-    print("¡Es importante apoyar a los pueblos bribri y cabécar en su lucha por la justicia!")
+    VERDE = "\033[92m"
+    AMARILLO = "\033[93m"
+    RESET = "\033[0m"
+
+    print(f"\n{VERDE}🌿 CONFLICTO EN CABAGRA, PUNTARENAS 🌿{RESET}\n")
+    print("--------------------------------------------------")
+    print(f"{AMARILLO}      Lucha por la tierra y la seguridad en territorios indígenas      {RESET}")
+    print("--------------------------------------------------\n")
+
+    print(f"{VERDE}El problema:{RESET}")
+    print("Cabagra, un territorio indígena en Puntarenas, enfrenta una creciente ola de usurpación de tierras. A pesar de la protección legal, personas externas invaden estos territorios de forma agresiva, generando violencia e inseguridad para los habitantes indígenas.\n")
+
+    print(f"{AMARILLO}Incidentes recientes:{RESET}")
+    print(f"- {AMARILLO}Febrero 2020:{RESET} Un intruso estableció un campamento con acompañantes armados, lo que generó alarma y preocupación por un posible aumento de la violencia.")
+    print(f"- {AMARILLO}Noviembre 2022:{RESET} Un grupo indígena recuperó una finca ocupada, creando un ambiente hostil según las autoridades. Este incidente resalta la necesidad urgente de diálogo y soluciones pacíficas.\n")
+
+    print(f"{VERDE}Consecuencias:{RESET}")
+    print("La usurpación de tierras en Cabagra no solo viola los derechos de los pueblos originarios, sino que también pone en riesgo su seguridad y bienestar. La violencia asociada a estas invasiones genera un clima de miedo e incertidumbre en la comunidad.\n")
+
+    print("--------------------------------------------------")
+    print(f"{AMARILLO}    ¡La lucha por la tierra y la justicia continúa!   {RESET}")
+    print("--------------------------------------------------\n")
+
+    input("Presiona Enter para volver al menú principal... ")
 
 def apa():
     # E: N/A
@@ -369,37 +503,51 @@ def apa():
     print("Si necesitas ayuda, no dudes en contactar al APA.")
     print("¡No estás solo!")
 
-# Inicio
-
 def inicio():
-
-    # Opciones:
-    # 1. ¡Tutorial!
-    # 2. Jugar
-    # 3. Instrucciones sobre solar punk
-    # 4. Información sobre pueblos originarios.
-    # 5. Información sobre conflicto cabaga Costa Rica
-    # 6. APA
-    # 7. Salir
+    """
+    Muestra el menú principal del juego y gestiona la navegación entre las opciones.
+    """
     matriz_juego = []
     juego_activo = True
     turno = 0
-    while juego_activo == True:
-        print(f"¡Estas en el turno {turno}")
-        print("¡Bienvenido a Solar Punk!")
-        print("1. ¡Tutorial!")
-        print("2. Jugar")
-        print("3. Instrucciones sobre solar punk")
-        print("4. Información sobre pueblos originarios.")
-        print("5. Información sobre conflicto cabaga Costa Rica")
-        print("6. APA")
-        print("7. Salir")
 
-        opcion = input("Ingrese el número de la opción que desea: ")
+    # Códigos ANSI de escape para colores
+    VERDE = "\033[92m"
+    AMARILLO = "\033[93m"
+    AZUL = "\033[94m"
+    ROJO = "\033[91m"
+    MAGENTA = "\033[95m"
+    CIAN = "\033[96m"
+    RESET = "\033[0m"
+
+    while juego_activo:
+        limpiar_pantalla()
+
+        print(f"\n{VERDE}🌱 TURNO {turno} 🌱\n{RESET}")  # Turno actual con emojis y color verde
+        print(f"{AMARILLO}🌿 ¡Bienvenido a Solar Punk! 🌿\n{RESET}")
+        print(f"{CIAN}┌───────────────────────────────┐{RESET}")  # Borde superior
+        print(f"{CIAN}│   --- MENÚ PRINCIPAL ---      │{RESET}")
+        print(f"{CIAN}├───────────────────────────────┤{RESET}")  # Separador
+        print(f"{CIAN} {AZUL}1. 📖 ¡Tutorial!             {RESET} ")
+        print(f"{CIAN} {VERDE}2. ▶️ Jugar                 {RESET}  ")
+        print(f"{CIAN} {AMARILLO}3. ℹ️ Solar Punk        {RESET}     ")
+        print(f"{CIAN} {ROJO}4. 🌍 Pueblos Originarios   {RESET}   ")
+        print(f"{CIAN} {MAGENTA}5. ⚔️ Conflicto de Cabagra  {RESET}")
+        print(f"{CIAN} {VERDE}6. 💚 APA                   {RESET}")
+        print(f"{CIAN} {ROJO}7. ❌ Salir                 {RESET}")
+        print(f"{CIAN}└───────────────────────────────┘\n{RESET}")  # Borde inferior
+
+        print(f"{MAGENTA} Matriz de juego: {RESET}")
+
+        if matriz_juego != []:
+            imprimir_matriz(matriz_juego)
+        print("\n")
+        opcion = input("Elige una opción: ")
+
         opcion_validada = validar_cadena_numero(opcion)
 
-        if opcion_validada == False:
-            print("Error: la opción debe ser un número.")
+        if not opcion_validada:
+            print(f"\n{ROJO}⛔ ¡Error! Debes ingresar un número.\n{RESET}") 
         else:
             opcion = int(opcion)
 
@@ -421,10 +569,12 @@ def inicio():
             elif opcion == 6:
                 apa()
             elif opcion == 7:
-                print("¡Gracias por jugar Solar Punk!")
+                print(f"\n{VERDE}¡Gracias por jugar Solar Punk! 🌿\n{RESET}")
                 break
             else:
-                print("Error: la opción debe ser un número entre 1 y 7.")
+                print(f"\n{ROJO}⛔ ¡Error! Opción inválida. Elige un número entre 1 y 7.\n{RESET}") 
+
         turno += 1
+
 inicio()
         
