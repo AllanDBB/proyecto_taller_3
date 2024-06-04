@@ -7,6 +7,7 @@ def limpiar_pantalla():
 
     for i in range(100):
         print()
+    return None
 
 def generar_matriz(dimensiones):
     #E: un número entero
@@ -163,9 +164,14 @@ def llenar_columna(matriz, elemento, columna):
     return matriz
 
 def validar_cadena_numero(cadena):
-    #E: una cadena de caracteres
+    #E: una cadena de máximo un caracter
     #S: un booleano
     #R: la cadena debe ser un número
+    if len(cadena) != 1:
+        return False
+    
+    elif cadena == "":
+        return False
     
     for letra in cadena:
         if letra != '0' and letra != '1' and letra != '2' and letra != '3' and letra != '4' and letra != '5' and letra != '6' and letra != '7' and letra != '8' and letra != '9':
@@ -194,11 +200,12 @@ def usurpacion(matriz):
         elif matriz[fila][columna] == "I":
             continue
         elif matriz[fila][columna] == "C":
-            matriz[fila][columna] = "U"
+            matriz[fila][columna] = "0"
             break
         else:
             matriz[fila][columna] = "U"
             break
+    return None
     
 def jugar(primera_vez = True, matriz = []):
 
@@ -216,7 +223,7 @@ def jugar(primera_vez = True, matriz = []):
 
     
     if primera_vez:
-        dimensiones = input("Ingrese las dimensiones de la matriz (>=3): ")
+        dimensiones = input("Ingrese las dimensiones de la matriz (>=3 & <=10): ")
         dimensiones_validadas = validar_cadena_numero(dimensiones)
 
         if dimensiones_validadas == False:
@@ -225,7 +232,7 @@ def jugar(primera_vez = True, matriz = []):
         else:
             dimensiones = int(dimensiones)
 
-            if dimensiones < 3:
+            if dimensiones < 3 or dimensiones > 10:
                 print(f"{ROJO}⛔ ¡Error! Las dimensiones deben ser al menos 3x3.{RESET}")
                 return jugar(True, matriz)
             else:
@@ -339,8 +346,11 @@ def jugar(primera_vez = True, matriz = []):
                     matriz[i][j] = "P"
 
         for i in range(len(matriz)):
-            if matriz[i].count("P") == len(matriz) or matriz[i].count("U") == len(matriz):
+            if matriz[i].count("U") == len(matriz):
                 print(f"\n{ROJO}¡Has perdido!{RESET}")
+                return True
+            elif matriz[i].count("P") == len(matriz):
+                print(f"\n{VERDE}¡Has ganado!{RESET}")
                 return True
         
         return matriz
@@ -387,6 +397,7 @@ def tutorial():
     print("      ¡LISTO PARA CONSTRUIR EL FUTURO!        ")
     print("--------------------------------------------------\n")
     input("Presiona Enter para volver al menú principal... ")
+    return None
    
 def instrucciones_solar_punk():
     """
@@ -420,6 +431,8 @@ def instrucciones_solar_punk():
     print("--------------------------------------------------\n")
 
     input("Presiona Enter para volver al menú principal... ")
+
+    return None
 
 def informacion_pueblos_originarios():
     """
@@ -460,6 +473,7 @@ def informacion_pueblos_originarios():
     print("--------------------------------------------------\n")
 
     input("Presiona Enter para volver al menú principal... ")
+    return None
 
 def informacion_conflicto_cabaga():
     """
@@ -492,16 +506,23 @@ def informacion_conflicto_cabaga():
 
     input("Presiona Enter para volver al menú principal... ")
 
-def apa():
-    # E: N/A
-    # S: N/A
-    # R: N/A
+    return None
 
-    print("APA")
-    print("El APA es la Asociación de Personas Anónimas.")
-    print("El APA es una organización que brinda apoyo a personas que sufren de adicciones.")
-    print("Si necesitas ayuda, no dudes en contactar al APA.")
-    print("¡No estás solo!")
+def apa():
+
+    limpiar_pantalla()
+    print( """
+            Referencias:
+            Carballo, J. (s.f.). Los Grupos Indígenas https://accesoalajusticia.poder-judicial.go.cr/index.php/indigenas/category/474-investigacion-indigena?download=1606:los-grupos-indigenas-en-cr#:~:text=Los%20Grupos%20Ind%C3%ADgenas%20Costarricenses,-Recopilado%20por%3A&text=En%20Costa%20Rica%20existen%20ocho%20grupos%20socioculturales%20ind%C3%ADgenas%20distintos%2C%20Cab%C3%A9cares,hablan%20en%206%20idiomas%20ind%C3%ADgenas
+            Crhoy. (2022). Pugna por finca agita conflicto en territorio indígena de Cabagra. https://www.crhoy.com/nacionales/pugna-por-finca-agita-conflicto-en-territorio-indigena-de-cabagra/
+            Delfino. (2020). Conflictos en territories indígenas salen de Salitre y llegan también a Cabagra.https://delfino.cr/2020/02/conflictos-en-territorios-indigenas-salen-de-salitre-y-llegan-tambien-a-cabagra
+            National Geographic. (2023). Solarpunk, el movimiento optimista que imagina un futuro mejor para el planeta. https://www.nationalgeographic.com.es/medio-ambiente/solarpunk-el-movimiento-optimista-que-imagina-un-futuro-mejor-para-el-planeta_19346
+
+        """)
+    
+    input("Presiona Enter para volver al menú principal... ")
+    
+    return None
 
 def inicio():
     """
@@ -549,12 +570,13 @@ def inicio():
         if not opcion_validada:
             print(f"\n{ROJO}⛔ ¡Error! Debes ingresar un número.\n{RESET}") 
         else:
+
             opcion = int(opcion)
 
             if opcion == 1:
                 tutorial()
             elif opcion == 2:
-                if turno == 0:
+                if matriz_juego == []:
                     matriz_juego = jugar(True, matriz_juego)
                 else:
                     matriz_juego = jugar(False, matriz_juego)
